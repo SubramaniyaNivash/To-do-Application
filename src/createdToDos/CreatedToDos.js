@@ -1,8 +1,18 @@
 import { Button, Table  } from "antd";
 import React from "react";
 import './CreatedToDos.css'
-export default function CreatedToDos () {
+export default function CreatedToDos (props) {
+    const {setAllMemos} = props
     const memoInLocalStorage = JSON.parse(localStorage.getItem('MEMO'));
+    const deleteToDo = (rowData) =>{
+        const remainingMemo = memoInLocalStorage.filter((localStorageMemo)=>{
+          if (rowData.slNo !== localStorageMemo.slNo){
+            return localStorageMemo;
+          }
+        });
+        setAllMemos(remainingMemo);
+        localStorage.setItem('MEMO', JSON.stringify(remainingMemo));
+      }  
       const columns = [
         {
           title: 'SL No',
@@ -20,9 +30,9 @@ export default function CreatedToDos () {
           title: 'ACTIONS',
           dataIndex: 'actions',
           key: 'actions',
-          render: () => <>
+          render: (_,rowData) => <>
           <Button>Edit</Button>
-          <Button>Delete</Button>
+          <Button onClick={()=>{deleteToDo(rowData)}}>Delete</Button>
           </>
         },
       ];

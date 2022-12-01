@@ -29,7 +29,7 @@ export default function CreateToDo() {
           <Input className="Create_ToDo_Input_Box" onChange={(event)=>onInputChange(event)} value={memo}/>
           <Button disabled={!Boolean(memo)} className="Create_ToDo_Button" type="primary" onClick={storeTheMemos}>Create Memo</Button>
         </div>
-        <CreatedToDos/>
+        <CreatedToDos setAllMemos={setAllMemos}/>
       </>
     )
 }
