@@ -1,0 +1,9 @@
+.Create_ToDo_Container{
+    margin-top: 1vh;
+    display: flex;
+    justify-content: center;
+    gap: 0.1vw;
+}
+.Create_ToDo_Input_Box{
+    width: 20vw;
+}
