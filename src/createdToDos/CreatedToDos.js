@@ -1,59 +1,85 @@
 import { Button, Table  } from "antd";
-import React, { useState } from "react";
+import React from "react";
 import EditModal from "../editModal/EditModal";
-import './CreatedToDos.css'
-export default function CreatedToDos (props) {
-    const {setAllMemos} = props
-    const [editModalOpen, setEditModalOpen] = useState(false);
-    const [memoToBeEdited, setMemoToBeEdited] = useState({});
-    const [memoIdToBeEdited, setMemoIdToBeEdited] = useState();
-    const memoInLocalStorage = JSON.parse(localStorage.getItem('MEMO'));
-    const deleteToDo = (rowData) =>{
-        const remainingMemo = memoInLocalStorage.filter((localStorageMemo)=>{
-          if (rowData.slNo !== localStorageMemo.slNo){
-            return localStorageMemo;
-          }
-        });
-        setAllMemos(remainingMemo);
-        localStorage.setItem('MEMO', JSON.stringify(remainingMemo));
+import './createdToDos.css'
+export default class CreatedToDos extends React.Component{
+  constructor(props){
+      super(props);
+      this.state = {
+        editModalOpen: false,
+        memoToBeEdited: {},
+        changeMemoId:'',
       }
-    const openEditModal = (rowData) => {
-      const memoToEdit = memoInLocalStorage.filter((localStorageMemo) => {
-        if (localStorageMemo.slNo === rowData.slNo){
-          return localStorageMemo;
+      this.deleteToDo = this.deleteToDo.bind(this);
+      this.editToDo = this.editToDo.bind(this);
+      this.editModalClose = this.editModalClose.bind(this);
+      this.saveEditedMemo = this.saveEditedMemo.bind(this);
+    }
+    columns = [
+      {
+        title: 'SL No',
+        dataIndex: 'slNo',
+        key: 'slNo',
+        render: (slNo) => <span>{slNo}</span>
+      },
+      {
+        title: 'MEMO',
+        dataIndex: 'text',
+        key: 'text',
+        render: (text) => <span>{text}</span>
+      },
+      {
+        title: 'ACTIONS',
+        dataIndex: 'actions',
+        key: 'actions',
+        render: (_,rowData) => <>
+        <Button onClick={()=>{this.editToDo(rowData)}}>Edit</Button>
+        <Button onClick={()=>{this.deleteToDo(rowData)}}>Delete</Button>
+        </>
+      },
+    ];
+    deleteToDo = (rowData) =>{
+      const remainingMemo = this.props.allMemo.filter((data)=>{
+        if(rowData.slNo !== data.slNo){
+          return data
         }
-      });
-      setMemoToBeEdited(memoToEdit[0].memo);
-      setMemoIdToBeEdited(memoToEdit[0].slNo);
-      setEditModalOpen(true);
+      })
+      this.props.onMemosChange(remainingMemo);
+    }
+    editToDo = (rowData) => {
+      const editingMemo = this.props.allMemo.find((data) =>{
+        if(rowData.slNo === data.slNo){
+          return data;
+        }
+      })
+      this.setState({memoToBeEdited: editingMemo})
+      this.setState({changeMemoId: editingMemo.slNo})
+      this.setState({editModalOpen: true});
     };
-      const columns = [
-        {
-          title: 'SL No',
-          dataIndex: 'slNo',
-          key: 'slNo',
-          render: (slNo) => <span>{slNo}</span>
-        },
-        {
-          title: 'MEMO',
-          dataIndex: 'memo',
-          key: 'memo',
-          render: (memo) => <span>{memo}</span>
-        },
-        {
-          title: 'ACTIONS',
-          dataIndex: 'actions',
-          key: 'actions',
-          render: (_,rowData) => <>
-          <Button onClick={()=>{openEditModal(rowData)}}>Edit</Button>
-          <Button onClick={()=>{deleteToDo(rowData)}}>Delete</Button>
-          </>
-        },
-      ];
+    editModalClose = () =>{
+      this.setState({editModalOpen: false})
+    };
+    onChangeMemo = (data) => {
+      const changeMemoSlNo = this.state.changeMemoId
+      const changeMemoText = data.target.value;
+      this.setState({memoToBeEdited: {changeMemoSlNo,changeMemoText}});
+    };
+    saveEditedMemo = () => {
+      const afterEditedMemos = this.props.allMemo.map((value)=>{
+        if(value.slNo === this.state.changeMemoId){
+          value.text = this.state.memoToBeEdited.changeMemoText;
+        }
+        return value;
+      })
+      this.props.onMemosChange(afterEditedMemos);
+      this.setState({editModalOpen: false});
+    };
+  render(){
     return(
-        <div>
-            <Table className="Memo_Table" columns={columns} dataSource={memoInLocalStorage} />
-            <EditModal editModalOpen={editModalOpen} setEditModalOpen={setEditModalOpen} memoToBeEdited={memoToBeEdited} setMemoToBeEdited={setMemoToBeEdited} memoIdToBeEdited={memoIdToBeEdited} setAllMemos={setAllMemos}/>
-        </div>
+    <div>
+      <Table className="Memo_Table" columns={this.columns} dataSource={this.props.allMemo} />
+      <EditModal editModalOpen={this.state.editModalOpen} memoToBeEdited={this.state.memoToBeEdited} closeEditModal={this.editModalClose} onChangeMemo={this.onChangeMemo} onMemosChange={this.handleMemoChange} saveEditedMemo={this.saveEditedMemo} />
+    </div>        
     )
+  }
 }
