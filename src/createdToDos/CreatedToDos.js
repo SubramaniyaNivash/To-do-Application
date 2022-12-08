@@ -1,6 +1,6 @@
 import { Button, Table  } from "antd";
 import React from "react";
-import EditModal from "../editModal/EditModal";
+import EditModal from "../editModal";
 import './createdToDos.css'
 export default class CreatedToDos extends React.Component{
   constructor(props){

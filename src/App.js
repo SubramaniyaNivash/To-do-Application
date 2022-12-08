@@ -1,5 +1,5 @@
 import './App.css';
-import ToDo from './toDo/ToDo';
+import ToDoApp from './toDoApp';
 
 function App() {
   return (
@@ -7,7 +7,7 @@ function App() {
       <header className="App-header">
         MEMORANDA
       </header>
-      <ToDo/>
+      <ToDoApp/>
     </div>
   );
 }
