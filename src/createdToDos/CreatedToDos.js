@@ -10,6 +10,7 @@ export default class CreatedToDos extends React.Component{
         editModalOpen: false,
         memoToBeEdited: {},
         changeMemoId:'',
+        disableOkButton : true,
       }
     }
     deleteToDo = (rowData) =>{
@@ -35,9 +36,15 @@ export default class CreatedToDos extends React.Component{
       this.setState({editModalOpen: false})
     };
     onChangeMemo = (data) => {
+      const {onlySpaces} = this.props;
+      this.setState({disableOkButton: false})
       const {changeMemoId } = this.state;
       const memoId = changeMemoId
       const text = data.target.value;
+      if(text === undefined || onlySpaces(text))
+      {
+        this.setState({disableOkButton: true})
+      }
       this.setState({memoToBeEdited: {memoId,text}});
     };
     saveEditedMemo = () => {
@@ -53,13 +60,13 @@ export default class CreatedToDos extends React.Component{
       this.setState({editModalOpen: false});
     };
   render(){
-    const {editModalOpen, memoToBeEdited} = this.state
+    const {editModalOpen, memoToBeEdited, disableOkButton} = this.state
     const {allMemo} = this.props;
     const columns = getTableColumns(this.editToDo, this.deleteToDo);
     return(
     <div>
       <Table className="Memo_Table" columns={columns} dataSource={allMemo} />
-      <EditModal editModalOpen={editModalOpen} memoToBeEdited={memoToBeEdited} closeEditModal={this.editModalClose} onChangeMemo={this.onChangeMemo} onMemosChange={this.handleMemoChange} saveEditedMemo={this.saveEditedMemo} />
+      <EditModal editModalOpen={editModalOpen} memoToBeEdited={memoToBeEdited} closeEditModal={this.editModalClose} onChangeMemo={this.onChangeMemo} onMemosChange={this.handleMemoChange} saveEditedMemo={this.saveEditedMemo} disableOkButton={disableOkButton}/>
     </div>        
     )
   }

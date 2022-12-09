@@ -10,6 +10,7 @@ export default class ToDoApp extends React.Component {
       allMemo: [],
       loader: true,
       deletedMemoCount: 0,
+      disableAddButton: true,
     }
     this.timer = () => {};
     this.handleInputChange = this.handleInputChange.bind(this);
@@ -35,7 +36,13 @@ export default class ToDoApp extends React.Component {
     clearTimeout(this.timer);
   }
   handleInputChange(event) {
-   this.setState({ memo: event?.target?.value})
+    const {memo} = this.state;
+    this.setState({disableAddButton: false});
+    this.setState({ memo: event?.target?.value})
+    if(memo === undefined || this.onlySpaces(event.target.value))
+    {
+      this.setState({disableAddButton: true})
+    }
   }
   handleMemoCreation () {
     const {allMemo, memo, deletedMemoCount} = this.state
@@ -57,17 +64,20 @@ export default class ToDoApp extends React.Component {
     const {deletedMemoCount} = this.state
     this.setState({deletedMemoCount: deletedMemoCount + 1});
   }
+  onlySpaces = (str) => {
+    return str.trim().length === 0;
+  }
   render() {
-    const {memo, loader, allMemo, deletedMemoCount} = this.state
+    const {memo, loader, allMemo, deletedMemoCount, disableAddButton} = this.state
       return(
       <div>
         {loader ? <Spin /> : 
           <React.Fragment>
             <div className="createToDoContainer">
               <Input className="createToDoInputBox" onChange={this.handleInputChange} value={memo} onPressEnter={this.storeTheMemos}/>
-              <Button disabled={!Boolean(memo)} className="Create_ToDo_Button" type="primary" onClick={this.storeTheMemos}>Create Memo</Button>
+              <Button disabled={disableAddButton} className="Create_ToDo_Button" type="primary" onClick={this.storeTheMemos}>Create Memo</Button>
             </div>
-            <CreatedToDos allMemo={allMemo} onMemosChange={this.handleMemoChange} deletedMemoCount={deletedMemoCount} onMemoDelete={this.handleMemoDelete}/>
+            <CreatedToDos allMemo={allMemo} onMemosChange={this.handleMemoChange} deletedMemoCount={deletedMemoCount} onMemoDelete={this.handleMemoDelete} onlySpaces={this.onlySpaces}/>
           </React.Fragment>
         }
       </div>
