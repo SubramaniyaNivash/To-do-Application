@@ -8,14 +8,15 @@ export default class ToDoApp extends React.Component {
     this.state = {
       memo: '',
       allMemo: [],
-      loader: false,
+      loader: true,
+      deletedMemoCount: 0,
     }
     this.timer = () => {};
-    this.onInputChange = this.onInputChange.bind(this);
+    this.handleInputChange = this.handleInputChange.bind(this);
+    this.handleMemoCreation = this.handleMemoCreation.bind(this);
     this.storeTheMemos = this.storeTheMemos.bind(this);
   }
   componentDidMount(){
-    this.setState({loader: true});
     const fetchData = () => {
       const localMemoData = localStorage.getItem('MEMO')
       if(!localMemoData){
@@ -24,39 +25,49 @@ export default class ToDoApp extends React.Component {
      else {
        this.setState({allMemo: JSON.parse(localMemoData)})
      }
-     this.setState({loader: false});
     };
     this.timer = setTimeout(() =>{
       fetchData();
+      this.setState({loader: false});
     },3000);
   }
   componentWillUnmount() {
     clearTimeout(this.timer);
   }
-  onInputChange(event) {
+  handleInputChange(event) {
    this.setState({ memo: event?.target?.value})
   }
+  handleMemoCreation () {
+    const {allMemo, memo, deletedMemoCount} = this.state
+    const memoId = allMemo.length +   1  + deletedMemoCount;
+    const text = memo;
+    return {memoId, text}
+  }
   storeTheMemos() {
-    const slNo = this.state.allMemo.length + 1 ;
-    const text = this.state.memo;
-    localStorage.setItem('MEMO',JSON.stringify([...this.state.allMemo,{slNo,text}]));
-    this.setState({allMemo: [...this.state.allMemo,{slNo,text}]});
-    this.setState({memo: ''});
+    const {allMemo} = this.state
+    const memo =this.handleMemoCreation
+    localStorage.setItem('MEMO',JSON.stringify([...allMemo,memo()]));
+    this.setState({allMemo: [...allMemo,memo()], memo: ''});
   }
   handleMemoChange = (data) => {
     this.setState({allMemo: data });
     localStorage.setItem('MEMO',JSON.stringify(data));
   }
+  handleMemoDelete = () => { 
+    const {deletedMemoCount} = this.state
+    this.setState({deletedMemoCount: deletedMemoCount + 1});
+  }
   render() {
+    const {memo, loader, allMemo, deletedMemoCount} = this.state
       return(
       <div>
-        {this.state.loader ? <Spin /> : 
+        {loader ? <Spin /> : 
           <React.Fragment>
             <div className="createToDoContainer">
-              <Input className="createToDoInputBox" onChange={this.onInputChange} value={this.state.memo} onPressEnter={this.storeTheMemos}/>
-              <Button disabled={!Boolean(this.state.memo)} className="Create_ToDo_Button" type="primary" onClick={this.storeTheMemos}>Create Memo</Button>
+              <Input className="createToDoInputBox" onChange={this.handleInputChange} value={memo} onPressEnter={this.storeTheMemos}/>
+              <Button disabled={!Boolean(memo)} className="Create_ToDo_Button" type="primary" onClick={this.storeTheMemos}>Create Memo</Button>
             </div>
-            <CreatedToDos allMemo={this.state.allMemo} onMemosChange={this.handleMemoChange}/>
+            <CreatedToDos allMemo={allMemo} onMemosChange={this.handleMemoChange} deletedMemoCount={deletedMemoCount} onMemoDelete={this.handleMemoDelete}/>
           </React.Fragment>
         }
       </div>
