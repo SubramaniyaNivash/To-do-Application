@@ -4,6 +4,7 @@ import EditModal from "../editModal";
 import './createdToDos.css'
 import { getTableColumns } from "./CreatedToDos.helper";
 import { connect } from 'react-redux';
+import { handleChangeMemoIdAction, handleEditModalAction, handleMemoToBeEditedAction, handleOkButtonAction } from "./action";
 class CreatedToDos extends React.Component{
   // eslint-disable-next-line no-useless-constructor
   constructor(props){
@@ -83,10 +84,10 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    handleEditModal: (value) => dispatch({type:'Edit_Modal', payload:value}),
-    handleMemoToBeEdited: (value) => dispatch({type:'Memo_To_Be_Edited', payload:value}),
-    handleChangeMemoId: (value) => dispatch({type:'Changed_Memo_Id', payload:value}),
-    handleOkButton: (value) => dispatch({type:'Ok_Button', payload: value}),
+    handleEditModal: (value) => dispatch(handleEditModalAction(value)),
+    handleMemoToBeEdited: (value) => dispatch(handleMemoToBeEditedAction(value)),
+    handleChangeMemoId: (value) => dispatch(handleChangeMemoIdAction(value)),
+    handleOkButton: (value) => dispatch(handleOkButtonAction(value)),
   }
 }
 

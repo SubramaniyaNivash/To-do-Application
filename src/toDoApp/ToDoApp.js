@@ -3,6 +3,7 @@ import './toDoApp.css'
 import {Input, Button, Spin } from 'antd';
 import CreatedToDos from "../createdToDos";
 import { connect } from 'react-redux';
+import { addButtonStateChangeAction, handleAllMemoAction, handleMemoDeleteAction, loaderStateChangeAction, onChangeMemoAction } from "./action";
 class ToDoApp extends React.Component {
   constructor(props) {
     super(props);
@@ -86,11 +87,11 @@ class ToDoApp extends React.Component {
 
   const mapDispatchToProps = (dispatch) => {
     return {
-      onChangeMemo: (value) => dispatch({type:'Memo_Change', payload: value}),
-      loaderStateChange: () => dispatch({type:'Loader_State_Change'}),
-      addButtonStateChange: (value) => dispatch({type:'Add_Button_State_Change', payload: value}),
-      handleMemoDelete: () => dispatch({type:'Memo_Delete'}),
-      handleAllMemo: (value) => dispatch({type:'All_Memo_Handle', payload: value}),
+      onChangeMemo: (value) => dispatch(onChangeMemoAction(value)),
+      loaderStateChange: () => dispatch(loaderStateChangeAction()),
+      addButtonStateChange: (value) => dispatch(addButtonStateChangeAction(value)),
+      handleMemoDelete: () => dispatch(handleMemoDeleteAction()),
+      handleAllMemo: (value) => dispatch(handleAllMemoAction(value)),
     }
   }
   
