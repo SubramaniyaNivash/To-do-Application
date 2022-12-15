@@ -45,7 +45,7 @@ class ToDoApp extends React.Component {
   }
   storeTheMemos() {
     const memo =this.handleMemoCreation
-    if(!this.onlySpaces(memo.text)){
+    if(!this.onlySpaces(memo().text)){
       localStorage.setItem('MEMO',JSON.stringify([...this.props.allMemo,memo()]));
       this.props.handleAllMemo([...this.props.allMemo,memo()])
       this.props.onChangeMemo('');
