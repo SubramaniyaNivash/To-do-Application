@@ -45,10 +45,12 @@ class ToDoApp extends React.Component {
   }
   storeTheMemos() {
     const memo =this.handleMemoCreation
-    localStorage.setItem('MEMO',JSON.stringify([...this.props.allMemo,memo()]));
-    this.props.handleAllMemo([...this.props.allMemo,memo()])
-    this.props.onChangeMemo('');
-    this.props.addButtonStateChange(true);
+    if(!this.onlySpaces(memo.text)){
+      localStorage.setItem('MEMO',JSON.stringify([...this.props.allMemo,memo()]));
+      this.props.handleAllMemo([...this.props.allMemo,memo()])
+      this.props.onChangeMemo('');
+      this.props.addButtonStateChange(true);
+    }
   }
   handleMemoChange = (data) => {
     this.props.handleAllMemo(data);
