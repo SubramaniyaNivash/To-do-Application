@@ -1,0 +1,12 @@
+.loader{
+    padding-top: 20%;
+}
+.createToDoContainer{
+    margin-top: 1vh;
+    display: flex;
+    justify-content: center;
+    padding-left: 2%;
+}
+.createToDoInputBox{
+    width: 20vw;
+}
