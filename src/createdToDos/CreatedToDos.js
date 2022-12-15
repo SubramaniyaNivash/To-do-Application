@@ -4,7 +4,7 @@ import EditModal from "../editModal";
 import './createdToDos.css'
 import { getTableColumns } from "./CreatedToDos.helper";
 import { connect } from 'react-redux';
-import { handleChangeMemoIdAction, handleEditModalAction, handleMemoToBeEditedAction, handleOkButtonAction } from "./action";
+import { handleChangeMemoIdAction, handleEditModalAction, handleMemoToBeEditedAction, handleOkButtonAction } from "../store/slice";
 class CreatedToDos extends React.Component{
   // eslint-disable-next-line no-useless-constructor
   constructor(props){
@@ -51,9 +51,10 @@ class CreatedToDos extends React.Component{
       const {allMemo, onMemosChange} = this.props;
       const afterEditedMemos = allMemo.map((value)=>{
         if(value.memoId === this.props.changedMemoId){
-          value.text = this.props.memoToBeEdited.text;
+          var obj = {...value}; // This part is done because it shows Cannot assign to read only property 'text' of object error message
+          obj.text = this.props.memoToBeEdited.text;
         }
-        return value;
+        return obj || value;
       })
       onMemosChange(afterEditedMemos);
       this.props.handleEditModal(false);
@@ -75,10 +76,10 @@ class CreatedToDos extends React.Component{
 
 const mapStateToProps = (state) => {
   return {
-    editModalOpen: state.editModalOpen,
-    memoToBeEdited: state.memoToBeEdited,
-    changedMemoId:state.changedMemoId,
-    disableOkButton: state.disableOkButton,
+    editModalOpen: state.reducer.editModalOpen,
+    memoToBeEdited: state.reducer.memoToBeEdited,
+    changedMemoId:state.reducer.changedMemoId,
+    disableOkButton: state.reducer.disableOkButton,
   }
 }
 

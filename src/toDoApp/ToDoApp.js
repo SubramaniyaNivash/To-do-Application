@@ -3,7 +3,7 @@ import './toDoApp.css'
 import {Input, Button, Spin } from 'antd';
 import CreatedToDos from "../createdToDos";
 import { connect } from 'react-redux';
-import { addButtonStateChangeAction, handleAllMemoAction, handleMemoDeleteAction, loaderStateChangeAction, onChangeMemoAction } from "./action";
+import { addButtonStateChangeAction, handleAllMemoAction, handleMemoDeleteAction, loaderStateChangeAction, onChangeMemoAction } from "../store/slice";
 class ToDoApp extends React.Component {
   constructor(props) {
     super(props);
@@ -78,12 +78,12 @@ class ToDoApp extends React.Component {
 
   const mapStateToProps = (state) => {
     return {
-      number: state.number,
-      memo: state.memo,
-      loader: state.loader,
-      disableAddButton: state.disableAddButton,
-      deletedMemoCount: state.deletedMemoCount,
-      allMemo: state.allMemo
+      number: state.reducer.number,
+      memo: state.reducer.memo,
+      loader: state.reducer.loader,
+      disableAddButton: state.reducer.disableAddButton,
+      deletedMemoCount: state.reducer.deletedMemoCount,
+      allMemo: state.reducer.allMemo
     }
   };
 
