@@ -1,0 +1,10 @@
+.memoTable{
+    margin-top: 2vh;
+}
+.editIcon, .deleteIcon{
+    font-size: 183%;
+    padding-right: 2%;
+}
+.deleteIcon{
+    color: #ff0000;
+}
