@@ -2,7 +2,7 @@ import { Tooltip } from 'antd';
 import './createdToDos.css';
 import {FormOutlined, DeleteOutlined} from '@ant-design/icons';
 import React from 'react';
-export const getTableColumns = (editToDo, deleteToDo, highlightRow) => {
+export const getTableColumns = (editToDo, deleteToDo) => {
     return [
         {
           title: 'MEMO ID',

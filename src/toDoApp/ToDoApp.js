@@ -4,71 +4,73 @@ import {Input, Button, Spin } from 'antd';
 import CreatedToDos from "../createdToDos";
 import { connect } from 'react-redux';
 import { addButtonStateChangeAction, handleAllMemoAction, handleMemoDeleteAction, loaderStateChangeAction, onChangeMemoAction } from "../store/slice";
+import { onlySpaces } from "../helper/helper";
+import PropTypes from 'prop-types';
 class ToDoApp extends React.Component {
   constructor(props) {
     super(props);
     this.timer = () => {};
-    this.handleInputChange = this.handleInputChange.bind(this);
-    this.handleMemoCreation = this.handleMemoCreation.bind(this);
-    this.storeTheMemos = this.storeTheMemos.bind(this);
   }
   componentDidMount(){
+    const {handleAllMemo, loaderStateChange} = this.props;
     const fetchData = () => {
       const localMemoData = localStorage.getItem('MEMO')
       if(!localMemoData){
        localStorage.setItem('MEMO', JSON.stringify([]));
      }
      else {
-       this.props.handleAllMemo(JSON.parse(localMemoData));
+       handleAllMemo(JSON.parse(localMemoData));
      }
     };
-    this.timer = setTimeout(() =>{
+    this.timer = setTimeout(() => {
       fetchData();
-      this.props.loaderStateChange();
+      loaderStateChange();
     },3000);
   }
   componentWillUnmount() {
     clearTimeout(this.timer);
   }
-  handleInputChange(event) { 
-    this.props.addButtonStateChange(false);
-    this.props.onChangeMemo(event?.target?.value);
-    if(this.props.memo === undefined || this.onlySpaces(event.target.value))
+  handleInputChange = (event) => { 
+    const {addButtonStateChange, onChangeMemo, memo} = this.props;
+    addButtonStateChange(false);
+    onChangeMemo(event?.target?.value);
+    if(memo === undefined || onlySpaces(event.target.value))
     {
-      this.props.addButtonStateChange(true);
+      addButtonStateChange(true);
     }
   }
-  handleMemoCreation () {
-    const memoId = this.props.allMemo.length +   1  + this.props.deletedMemoCount;
-    const text = this.props.memo;
+  handleMemoCreation = () => {
+    const {allMemo, deletedMemoCount, memo} = this.props;
+    const memoId = allMemo.length +   1  + deletedMemoCount;
+    const text = memo;
     return {memoId, text}
   }
-  storeTheMemos() {
+  storeTheMemos = () => {
+    const {allMemo, handleAllMemo, onChangeMemo, addButtonStateChange} = this.props;
     const memo =this.handleMemoCreation
-    if(!this.onlySpaces(memo().text)){
-      localStorage.setItem('MEMO',JSON.stringify([...this.props.allMemo,memo()]));
-      this.props.handleAllMemo([...this.props.allMemo,memo()])
-      this.props.onChangeMemo('');
-      this.props.addButtonStateChange(true);
+    if(!onlySpaces(memo().text)){
+      localStorage.setItem('MEMO',JSON.stringify([...allMemo,memo()]));
+      handleAllMemo([...allMemo,memo()])
+      onChangeMemo('');
+      addButtonStateChange(true);
     }
   }
   handleMemoChange = (data) => {
-    this.props.handleAllMemo(data);
+    const {handleAllMemo} = this.props;
+    handleAllMemo(data);
     localStorage.setItem('MEMO',JSON.stringify(data));
   }
-  onlySpaces = (str) => {
-    return str.trim().length === 0;
-  }
   render() {
+    const {memo, disableAddButton, allMemo, deletedMemoCount, handleMemoDelete, loader} = this.props
       return(
       <div>
-        {this.props.loader ? <div className="loader"><Spin /></div> : 
+        {loader ? <div className="loader"><Spin /></div> : 
           <React.Fragment>
             <div className="createToDoContainer">
-              <Input className="createToDoInputBox" onChange={this.handleInputChange} value={this.props.memo} onPressEnter={this.storeTheMemos}/>
-              <Button disabled={this.props.disableAddButton} className="Create_ToDo_Button" type="primary" onClick={this.storeTheMemos}>Create Memo</Button>
+              <Input className="createToDoInputBox" onChange={this.handleInputChange} value={memo} onPressEnter={this.storeTheMemos}/>
+              <Button disabled={disableAddButton} className="Create_ToDo_Button" type="primary" onClick={this.storeTheMemos}>Create Memo</Button>
             </div>
-            <CreatedToDos allMemo={this.props.allMemo} onMemosChange={this.handleMemoChange} deletedMemoCount={this.props.deletedMemoCount} onMemoDelete={this.props.handleMemoDelete} onlySpaces={this.onlySpaces}/>
+            <CreatedToDos allMemo={allMemo} onMemosChange={this.handleMemoChange} deletedMemoCount={deletedMemoCount} onMemoDelete={handleMemoDelete}/>
           </React.Fragment>
         }
       </div>
@@ -98,3 +100,14 @@ class ToDoApp extends React.Component {
   }
   
   export default connect(mapStateToProps, mapDispatchToProps )(ToDoApp);
+
+  ToDoApp.propTypes = {
+    handleAllMemo: PropTypes.func,
+    loaderStateChange: PropTypes.func,
+    addButtonStateChange: PropTypes.func,
+    onChangeMemo:PropTypes.func,
+    memo:PropTypes.string,
+    allMemo:PropTypes.array,
+    deletedMemoCount:PropTypes.number,
+    loader: PropTypes.bool,
+  };

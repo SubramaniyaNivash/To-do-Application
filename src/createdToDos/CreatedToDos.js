@@ -2,10 +2,27 @@ import { Table  } from "antd";
 import React from "react";
 import EditModal from "../editModal";
 import './createdToDos.css'
-import { getTableColumns } from "./CreatedToDos.helper";
+import { getTableColumns } from "./createdToDos.helper";
 import { connect } from 'react-redux';
 import { handleChangeMemoIdAction, handleEditModalAction, handleMemoToBeEditedAction, handleOkButtonAction } from "../store/slice";
+import { onlySpaces } from "../helper/helper";
+import PropTypes from 'prop-types';
+
 class CreatedToDos extends React.Component{
+  //Type checking is done here because of Typo in static class property declaration
+  static propTypes ={
+    allMemo: PropTypes.array,
+    onMemosChange: PropTypes.func,
+    onMemoDelete: PropTypes.func,
+    handleEditModal: PropTypes.func,
+    handleOkButton: PropTypes.func,
+    changedMemoId: PropTypes.string,
+    handleMemoToBeEdited: PropTypes.func,
+    handleChangeMemoId: PropTypes.func,
+    memoToBeEdited: PropTypes.object,
+    editModalOpen: PropTypes.bool,
+    disableOkButton: PropTypes.bool,
+  };
   // eslint-disable-next-line no-useless-constructor
   constructor(props){
       super(props);
@@ -22,53 +39,54 @@ class CreatedToDos extends React.Component{
       onMemosChange(remainingMemo);
     }
     editToDo = (rowData) => {
-      this.props.handleEditModal(true);
-      const {allMemo} = this.props;
+      const {allMemo, handleEditModal, handleMemoToBeEdited, handleChangeMemoId} = this.props;
+      handleEditModal(true);
       const editingMemo = allMemo.find((data) =>{
         if(rowData.memoId === data.memoId){
           return data;
         }
         return null;
       })
-      this.props.handleMemoToBeEdited(editingMemo);
-      this.props.handleChangeMemoId(editingMemo.memoId);
+      handleMemoToBeEdited(editingMemo);
+      handleChangeMemoId(editingMemo.memoId);
     };
     editModalClose = () =>{
-      this.props.handleEditModal(false);
+      const {handleEditModal} = this.props;
+      handleEditModal(false);
     };
     onChangeMemo = (data) => {
-      const {onlySpaces} = this.props;
-      this.props.handleOkButton(false);
-      const memoId = this.props.changedMemoId
+      const {handleOkButton, changedMemoId, handleMemoToBeEdited} = this.props
+      handleOkButton(false);
+      const memoId = changedMemoId
       const text = data.target.value;
       if(text === undefined || onlySpaces(text))
       {
-        this.props.handleOkButton(true);
+        handleOkButton(true);
       }
-      this.props.handleMemoToBeEdited({memoId,text});
+      handleMemoToBeEdited({memoId,text});
     };
     saveEditedMemo = () => {
-      const {allMemo, onMemosChange} = this.props;
+      const {allMemo, onMemosChange, changedMemoId, memoToBeEdited, handleEditModal} = this.props;
       const afterEditedMemos = allMemo.map((value)=>{
-        if(value.memoId === this.props.changedMemoId){
+        if(value.memoId === changedMemoId){
           var obj = {...value}; // This part is done because it shows Cannot assign to read only property 'text' of object error message
-          obj.text = this.props.memoToBeEdited.text;
+          obj.text = memoToBeEdited.text;
         }
         return obj || value;
       })
       onMemosChange(afterEditedMemos);
-      this.props.handleEditModal(false);
+      handleEditModal(false);
     };
     uniqueKeyGenerator = () => {
       return `row_${ Math.random()}`
     };
   render(){
-    const {allMemo} = this.props;
+    const {allMemo, editModalOpen, memoToBeEdited, disableOkButton} = this.props;
     const columns = getTableColumns(this.editToDo, this.deleteToDo);
     return(
     <div>
       <Table className="Memo_Table" columns={columns} dataSource={allMemo} rowKey={this.uniqueKeyGenerator}/>
-      <EditModal editModalOpen={this.props.editModalOpen} memoToBeEdited={this.props.memoToBeEdited} closeEditModal={this.editModalClose} onChangeMemo={this.onChangeMemo} onMemosChange={this.handleMemoChange} saveEditedMemo={this.saveEditedMemo} disableOkButton={this.props.disableOkButton}/>
+      <EditModal editModalOpen={editModalOpen} memoToBeEdited={memoToBeEdited} closeEditModal={this.editModalClose} onChangeMemo={this.onChangeMemo} onMemosChange={this.handleMemoChange} saveEditedMemo={this.saveEditedMemo} disableOkButton={disableOkButton}/>
     </div>        
     )
   }
@@ -92,4 +110,4 @@ const mapDispatchToProps = (dispatch) => {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(CreatedToDos)
+export default connect(mapStateToProps, mapDispatchToProps)(CreatedToDos);
