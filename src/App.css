@@ -1,8 +1,8 @@
-.App {
+.app {
   text-align: center;
 }
 
-.App-header {
+.appHeader {
   background-color: #ffffff;
   display: flex;
   flex-direction: column;

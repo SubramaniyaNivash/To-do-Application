@@ -22,10 +22,10 @@ export const getTableColumns = (editToDo, deleteToDo) => {
           key: 'actions',
           render: (_,rowData) => <>
           <Tooltip title='Edit'>
-            <FormOutlined className='Edit_Icon' onClick={()=>{editToDo(rowData)}}/>
+            <FormOutlined className='editIcon' onClick={()=>{editToDo(rowData)}}/>
           </Tooltip>
           <Tooltip title='Delete'>
-            <DeleteOutlined className='Delete_Icon' onClick={()=>{deleteToDo(rowData)}}/>
+            <DeleteOutlined className='deleteIcon' onClick={()=>{deleteToDo(rowData)}}/>
           </Tooltip>
           </>
         },

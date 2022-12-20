@@ -85,7 +85,7 @@ class CreatedToDos extends React.Component{
     const columns = getTableColumns(this.editToDo, this.deleteToDo);
     return(
     <div>
-      <Table className="Memo_Table" columns={columns} dataSource={allMemo} rowKey={this.uniqueKeyGenerator}/>
+      <Table className="memoTable" columns={columns} dataSource={allMemo} rowKey={this.uniqueKeyGenerator}/>
       <EditModal editModalOpen={editModalOpen} memoToBeEdited={memoToBeEdited} closeEditModal={this.editModalClose} onChangeMemo={this.onChangeMemo} onMemosChange={this.handleMemoChange} saveEditedMemo={this.saveEditedMemo} disableOkButton={disableOkButton}/>
     </div>        
     )

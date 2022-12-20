@@ -1,10 +1,10 @@
-.Memo_Table{
+.memoTable{
     margin-top: 2vh;
 }
-.Edit_Icon, .Delete_Icon, .Highlight_Icon{
+.editIcon, .deleteIcon{
     font-size: 183%;
     padding-right: 2%;
 }
-.Delete_Icon{
+.deleteIcon{
     color: #ff0000;
 }

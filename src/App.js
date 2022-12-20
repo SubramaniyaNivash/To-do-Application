@@ -3,8 +3,8 @@ import ToDoApp from './toDoApp';
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
+    <div className="app">
+      <header className="appHeader">
         MEMORANDA
       </header>
       <ToDoApp/>

@@ -22,10 +22,15 @@ class ToDoApp extends React.Component {
        handleAllMemo(JSON.parse(localMemoData));
      }
     };
-    this.timer = setTimeout(() => {
-      fetchData();
-      loaderStateChange();
-    },3000);
+    const myPromise = new Promise((resolve, reject) => {
+      this.timer = setTimeout(() => {
+        resolve(fetchData,loaderStateChange);
+      }, 3000);
+    });
+    
+    myPromise
+      .then((res) => {res(); loaderStateChange();})
+      .catch(()=>{console.log('Failed to load')})
   }
   componentWillUnmount() {
     clearTimeout(this.timer);
@@ -68,7 +73,7 @@ class ToDoApp extends React.Component {
           <React.Fragment>
             <div className="createToDoContainer">
               <Input className="createToDoInputBox" onChange={this.handleInputChange} value={memo} onPressEnter={this.storeTheMemos}/>
-              <Button disabled={disableAddButton} className="Create_ToDo_Button" type="primary" onClick={this.storeTheMemos}>Create Memo</Button>
+              <Button disabled={disableAddButton} type="primary" onClick={this.storeTheMemos}>Create Memo</Button>
             </div>
             <CreatedToDos allMemo={allMemo} onMemosChange={this.handleMemoChange} deletedMemoCount={deletedMemoCount} onMemoDelete={handleMemoDelete}/>
           </React.Fragment>
